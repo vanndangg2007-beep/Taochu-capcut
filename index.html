@@ -3,86 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tạo Chữ Nhảy Theo Nhạc V9</title>
+  <title>Tạo Chữ Nhảy Theo Nhạc V10</title>
   <link href="https://googleapis.com" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Be Vietnam Pro', sans-serif; }
-    body { background: #121212; color: #fff; display: flex; flex-direction: column; align-items: center; padding: 16px; min-height: 100vh; }
-    h2 { font-size: 18px; margin-bottom: 12px; color: #00f2fe; text-align: center; }
-    
+    body { background: #121212; color: #fff; display: flex; flex-direction: column; align-items: center; padding: 16px; }
+    h2 { font-size: 18px; margin-bottom: 12px; color: #00f2fe; }
     #preview-box {
-      width: 100%; max-width: 400px; height: 260px; background: #000000;
+      width: 100%; max-width: 400px; height: 250px; background: #000;
       border: 1px solid #333; border-radius: 12px; display: flex;
       align-items: center; justify-content: center; padding: 20px;
-      text-align: center; overflow: hidden; position: relative; margin-bottom: 16px;
+      text-align: center; overflow: hidden; margin-bottom: 14px;
     }
-    #preview-text {
-      font-size: 26px; color: #ffffff; word-break: break-word;
-      white-space: pre-wrap; line-height: 1.5; transition: transform 0.06s ease-out;
-    }
-
+    #preview-text { font-size: 26px; color: #fff; white-space: pre-wrap; line-height: 1.5; }
     @keyframes fadeAnim { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
-    @keyframes floatAnim { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
-    @keyframes beatDemo { 0%, 100% { transform: scale(1); } 20% { transform: scale(1.15); } 40% { transform: scale(1); } }
-    
+    @keyframes beatDemo { 0%, 100% { transform: scale(1); } 25% { transform: scale(1.15); } 50% { transform: scale(1); } }
     .anim-fade { animation: fadeAnim 2.5s infinite ease-in-out; }
-    .anim-float { animation: floatAnim 2.5s infinite ease-in-out; }
-    .anim-beat-demo { animation: beatDemo 0.9s infinite ease-out; }
-
+    .anim-beat { animation: beatDemo 0.85s infinite ease-out; }
     .controls { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 10px; }
-    textarea {
-      width: 100%; height: 80px; padding: 12px; border-radius: 8px;
-      border: 1px solid #444; background: #1e1e1e; color: #fff; font-size: 15px; resize: none;
-    }
-    .row { display: flex; gap: 8px; align-items: center; justify-content: space-between; }
+    textarea { width: 100%; height: 75px; padding: 10px; border-radius: 8px; border: 1px solid #444; background: #1e1e1e; color: #fff; font-size: 15px; }
+    .row { display: flex; gap: 8px; align-items: center; }
     select, input[type="range"] { flex: 1; padding: 10px; border-radius: 8px; background: #1e1e1e; color: #fff; border: 1px solid #444; }
-    input[type="color"] { width: 44px; height: 40px; border: none; border-radius: 8px; background: none; cursor: pointer; }
-    
-    .audio-box {
-      background: #1e1e1e; border: 1px dashed #00f2fe; border-radius: 8px;
-      padding: 10px; display: flex; flex-direction: column; gap: 8px;
-    }
-    .upload-wrapper {
-      position: relative; width: 100%; height: 42px; background: #00f2fe;
-      border-radius: 6px; display: flex; align-items: center; justify-content: center;
-      color: #000; font-weight: 700; font-size: 14px; overflow: hidden;
-    }
-    .upload-wrapper input {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      opacity: 0; cursor: pointer; font-size: 100px;
-    }
-    #status-bar {
-      font-size: 13px; padding: 8px 10px; border-radius: 6px;
-      background: #252525; color: #aaa; word-break: break-all;
-    }
-    video { width: 100%; height: 48px; display: none; border-radius: 6px; background: #000; }
-
+    input[type="color"] { width: 44px; height: 40px; border: none; border-radius: 8px; }
+    .audio-box { background: #1e1e1e; border: 1px dashed #00f2fe; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+    .btn-pick { background: #00f2fe; color: #000; padding: 12px; border-radius: 6px; font-weight: 700; text-align: center; cursor: pointer; display: block; }
+    #status-bar { font-size: 13px; padding: 8px; border-radius: 6px; background: #252525; color: #ff6b6b; }
+    video { width: 100%; height: 48px; display: none; border-radius: 6px; }
     .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    button {
-      padding: 12px; border: none; border-radius: 8px; font-weight: 700;
-      font-size: 14px; cursor: pointer; transition: 0.2s;
-    }
+    button { padding: 12px; border: none; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; }
     .btn-black { background: #000; color: #fff; border: 1px solid #555; }
     .btn-green { background: #00b140; color: #fff; }
-    .btn-glow { background: #2a2a2a; color: #ffd700; border: 1px solid #555; }
-    .btn-download { background: linear-gradient(90deg, #00f2fe, #4facfe); color: #000; grid-column: span 2; font-size: 15px; }
     .btn-full { background: #333; color: #fff; grid-column: span 2; }
-    
-    .fullscreen-mode #preview-box {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      max-width: none; border-radius: 0; border: none; z-index: 999;
-    }
-    #exit-full {
-      display: none; position: fixed; top: 20px; right: 20px; z-index: 1000;
-      background: rgba(255,255,255,0.2); color: #fff; padding: 8px 14px; border-radius: 20px; font-size: 12px;
-    }
+    .fullscreen-mode #preview-box { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; max-width: none; border-radius: 0; z-index: 999; }
+    #exit-full { display: none; position: fixed; top: 20px; right: 20px; z-index: 1000; background: rgba(255,255,255,0.25); color: #fff; padding: 8px 14px; border-radius: 20px; }
     .fullscreen-mode #exit-full { display: block; }
   </style>
 </head>
 <body>
-
-  <h2>🎵 TẠO CHỮ NHẢY THEO NHẠC V9 🎵</h2>
-  <button id="exit-full" onclick="toggleFull()">✕ Thoát toàn màn hình</button>
+  <h2>🎵 TẠO CHỮ NHẢY THEO NHẠC V10 🎵</h2>
+  <button id="exit-full" onclick="document.body.classList.remove('fullscreen-mode')">✕ Thoát</button>
 
   <div id="preview-box">
     <div id="preview-text">con gio lua qua
@@ -91,146 +50,67 @@ o cua so</div>
 
   <div class="controls">
     <div class="audio-box">
-      <div class="upload-wrapper">
-        <span>📂 Bấm Vào Đây Chọn Video / Nhạc</span>
-        <input type="file" id="media-upload" accept="video/*,audio/*">
-      </div>
-      <div id="status-bar">⚪ Trạng thái: Chờ chọn video từ máy</div>
-      <video id="media-player" controls loop playsinline></video>
+      <label class="btn-pick" for="file-input">📂 Bấm Chọn Video / Nhạc</label>
+      <input type="file" id="file-input" accept="video/*,audio/*" style="display:none" onchange="handleFile(this)">
+      <div id="status-bar">🔴 Lỗi: Chưa chạy được mã (Kiểm tra JavaScript hoặc dán thiếu mã)</div>
+      <video id="player" controls loop playsinline></video>
     </div>
 
-    <textarea id="text-input" placeholder="Nhập lời bài hát hoặc câu nói..." oninput="updateText()">con gio lua qua
+    <textarea id="txt" oninput="document.getElementById('preview-text').innerText = this.value">con gio lua qua
 o cua so</textarea>
 
     <div class="row">
-      <select id="font-select" onchange="updateStyle()">
+      <select onchange="document.getElementById('preview-text').style.fontFamily = this.value">
         <option value="'Playfair Display', serif">Chữ cổ điển giống video mẫu</option>
         <option value="'Dancing Script', cursive">Chữ viết tay mềm mại</option>
         <option value="'Pacifico', cursive">Chữ nghệ thuật uốn lượn</option>
-        <option value="'Montserrat', sans-serif">Chữ hiện đại sắc nét</option>
-        <option value="'Be Vietnam Pro', sans-serif">Chữ đơn giản mặc định</option>
+        <option value="'Montserrat', sans-serif">Chữ hiện đại</option>
       </select>
-      <input type="color" id="color-picker" value="#ffffff" onchange="updateStyle()">
+      <input type="color" value="#ffffff" onchange="document.getElementById('preview-text').style.color = this.value">
     </div>
 
     <div class="row">
-      <span style="font-size: 13px; color: #aaa;">Cỡ chữ:</span>
-      <input type="range" id="size-slider" min="18" max="60" value="26" oninput="updateStyle()">
-      <select id="anim-select" onchange="updateAnim()" style="max-width: 155px;">
-        <option value="beat">Nhảy theo nhạc</option>
-        <option value="typewriter">Chạy từng chữ (Gõ phím)</option>
+      <span style="font-size: 13px;">Cỡ chữ:</span>
+      <input type="range" min="16" max="60" value="26" oninput="document.getElementById('preview-text').style.fontSize = this.value + 'px'">
+      <select onchange="document.getElementById('preview-text').className = this.value" style="max-width: 150px;">
+        <option value="anim-beat">Nhảy theo nhịp</option>
         <option value="anim-fade">Hiện mờ dần</option>
-        <option value="anim-float">Lơ lửng</option>
-        <option value="">Tĩnh (Không nhảy)</option>
+        <option value="">Tĩnh</option>
       </select>
     </div>
 
     <div class="btn-group">
-      <button class="btn-black" onclick="setBg('#000000')">⬛ Nền Đen</button>
-      <button class="btn-green" onclick="setBg('#00FF00')">🟩 Phông Xanh</button>
-      <button class="btn-glow" onclick="toggleGlow()" style="grid-column: span 2;">🌟 Bật / Tắt viền phát sáng</button>
-      <button class="btn-full" onclick="playAndFull()">▶️ Phát Nhạc & Phóng To (Để quay video)</button>
-      <button class="btn-download" onclick="downloadImage()">⬇️ Tải Ảnh Chữ Tĩnh (PNG)</button>
+      <button class="btn-black" onclick="document.getElementById('preview-box').style.background='#000'">⬛ Nền Đen</button>
+      <button class="btn-green" onclick="document.getElementById('preview-box').style.background='#00FF00'">🟩 Phông Xanh</button>
+      <button class="btn-full" onclick="startFull()">▶️ Phát Nhạc & Phóng To Quay Video</button>
     </div>
   </div>
 
   <script>
-    let currentBg = '#000000';
-    let isGlow = false;
-    let typeTimer = null;
+    var st = document.getElementById('status-bar');
+    st.style.color = '#00ff88';
+    st.innerText = '🟢 Hệ thống sẵn sàng! Bấm nút xanh để chọn video';
 
-    const previewBox = document.getElementById('preview-box');
-    const previewText = document.getElementById('preview-text');
-    const mediaPlayer = document.getElementById('media-player');
-    const statusBar = document.getElementById('status-bar');
-    const fileInput = document.getElementById('media-upload');
-
-    fileInput.onchange = function(e) {
-      if (!e.target.files || e.target.files.length === 0) return;
-      const file = e.target.files.item(0);
-
-      statusBar.style.color = '#ffd700';
-      statusBar.innerText = '⏳ Đang nạp: ' + file.name;
-
-      const fileURL = URL.createObjectURL(file);
-      mediaPlayer.src = fileURL;
-      mediaPlayer.style.display = 'block';
-      mediaPlayer.load();
-
-      statusBar.style.color = '#00ff88';
-      statusBar.innerText = '✅ Đã nhận: ' + file.name + ' (Bấm Play bên dưới)';
-
-      mediaPlayer.play().then(function() {
-        startEffect();
-      }).catch(function() {});
-    };
-
-    mediaPlayer.onplay = function() {
-      startEffect();
-    };
-
-    mediaPlayer.onpause = function() {
-      previewText.classList.remove('anim-beat-demo');
-      if (typeTimer) clearInterval(typeTimer);
-    };
-
-    function startEffect() {
-      const mode = document.getElementById('anim-select').value;
-      if (mode === 'beat') {
-        previewText.classList.add('anim-beat-demo');
-      } else if (mode === 'typewriter') {
-        runTypewriter();
-      }
+    function handleFile(input) {
+      if (!input.files || !input.files.length) return;
+      var file = input.files.item(0);
+      st.style.color = '#ffd700';
+      st.innerText = '⏳ Đang nạp: ' + file.name;
+      var player = document.getElementById('player');
+      player.src = URL.createObjectURL(file);
+      player.style.display = 'block';
+      player.play().catch(function(){});
+      document.getElementById('preview-text').className = 'anim-beat';
+      st.style.color = '#00ff88';
+      st.innerText = '✅ Đã nhận: ' + file.name;
     }
 
-    function runTypewriter() {
-      if (typeTimer) clearInterval(typeTimer);
-      const fullText = document.getElementById('text-input').value || 'con gio lua qua...';
-      let index = 0;
-      previewText.innerText = '';
-      typeTimer = setInterval(function() {
-        if (index < fullText.length) {
-          previewText.innerText += fullText.charAt(index);
-          index++;
-        } else {
-          clearInterval(typeTimer);
-        }
-      }, 90);
+    function startFull() {
+      var player = document.getElementById('player');
+      if (player.src) player.play().catch(function(){});
+      document.body.classList.add('fullscreen-mode');
+      document.getElementById('preview-text').className = 'anim-beat';
     }
-
-    function updateText() {
-      const val = document.getElementById('text-input').value || 'Nhập chữ của bạn...';
-      previewText.innerText = val;
-      if (document.getElementById('anim-select').value === 'typewriter') {
-        runTypewriter();
-      }
-    }
-
-    function updateStyle() {
-      previewText.style.fontFamily = document.getElementById('font-select').value;
-      previewText.style.color = document.getElementById('color-picker').value;
-      previewText.style.fontSize = document.getElementById('size-slider').value + 'px';
-      applyGlow();
-    }
-
-    function setBg(color) {
-      currentBg = color;
-      previewBox.style.background = color;
-    }
-
-    function toggleGlow() {
-      isGlow = !isGlow;
-      applyGlow();
-    }
-
-    function applyGlow() {
-      const color = document.getElementById('color-picker').value;
-      previewText.style.textShadow = isGlow ? '0 0 12px ' + color + ', 0 0 24px ' + color : 'none';
-    }
-
-    function updateAnim() {
-      const val = document.getElementById('anim-select').value;
-      previewText.className = '';
-      if (typeTimer) clearInterval(typeTimer);
-      previewText.innerText = document.getElementById('text-input').value || 'con gio lua qua...';
-
+  </script>
+</body>
+</html>
