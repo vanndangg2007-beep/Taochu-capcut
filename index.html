@@ -23,6 +23,7 @@
 
     @keyframes fadeAnim { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
     @keyframes floatAnim { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     .anim-fade { animation: fadeAnim 2.5s infinite ease-in-out; }
     .anim-float { animation: floatAnim 2.5s infinite ease-in-out; }
 
@@ -42,6 +43,15 @@
     .audio-label {
       display: block; text-align: center; background: #00f2fe; color: #000;
       padding: 10px; border-radius: 6px; font-weight: 700; font-size: 14px; cursor: pointer;
+    }
+    #status-bar {
+      display: none; font-size: 13px; padding: 8px 10px; border-radius: 6px;
+      background: #252525; color: #ffd700; align-items: center; gap: 8px;
+    }
+    .spinner {
+      width: 16px; height: 16px; border: 2px solid #ffd700;
+      border-top: 2px solid transparent; border-radius: 50%;
+      animation: spin 0.8s linear infinite; flex-shrink: 0;
     }
     audio { width: 100%; height: 36px; display: none; }
 
@@ -80,6 +90,12 @@
     <div class="audio-box">
       <label class="audio-label" for="media-upload">📂 Chọn Video TikTok hoặc Nhạc từ máy</label>
       <input type="file" id="media-upload" accept="audio/*,video/*" style="display:none;" onchange="loadMedia(event)">
+      
+      <div id="status-bar">
+        <div id="spinner-icon" class="spinner"></div>
+        <span id="status-text">Đang tải nhạc lên...</span>
+      </div>
+
       <audio id="audio-player" controls loop></audio>
     </div>
 
@@ -125,15 +141,36 @@
     const previewBox = document.getElementById('preview-box');
     const previewText = document.getElementById('preview-text');
     const audioPlayer = document.getElementById('audio-player');
+    const statusBar = document.getElementById('status-bar');
+    const statusText = document.getElementById('status-text');
+    const spinnerIcon = document.getElementById('spinner-icon');
 
     function loadMedia(event) {
       const file = event.target.files[0];
       if (!file) return;
+
+      statusBar.style.display = 'flex';
+      spinnerIcon.style.display = 'block';
+      statusBar.style.color = '#ffd700';
+      statusText.innerText = `⏳ Đang xử lý: ${file.name}...`;
+
       const url = URL.createObjectURL(file);
       audioPlayer.src = url;
-      audioPlayer.style.display = 'block';
-      setupAudioAnalyzer();
-      audioPlayer.play();
+
+      audioPlayer.onloadeddata = () => {
+        spinnerIcon.style.display = 'none';
+        statusBar.style.color = '#00ff88';
+        statusText.innerText = `✅ Đã xong! Sẵn sàng phát: ${file.name}`;
+        audioPlayer.style.display = 'block';
+        setupAudioAnalyzer();
+        audioPlayer.play();
+      };
+
+      audioPlayer.onerror = () => {
+        spinnerIcon.style.display = 'none';
+        statusBar.style.color = '#ff4d4d';
+        statusText.innerText = `❌ Lỗi định dạng file, hãy chọn video/nhạc khác!`;
+      };
     }
 
     function setupAudioAnalyzer() {
@@ -192,50 +229,3 @@
         previewText.className = '';
       } else {
         isBeatMode = false;
-        previewText.style.transform = 'scale(1)';
-        previewText.className = val;
-      }
-    }
-
-    function playAndFull() {
-      if (audioPlayer.src) {
-        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-        audioPlayer.play();
-      }
-      document.body.classList.add('fullscreen-mode');
-    }
-
-    function toggleFull() {
-      document.body.classList.remove('fullscreen-mode');
-    }
-
-    function downloadImage() {
-      const canvas = document.createElement('canvas');
-      canvas.width = 1080;
-      canvas.height = 1080;
-      const ctx = canvas.getContext('2d');
-      ctx.fillStyle = currentBg;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      const fontSize = parseInt(document.getElementById('size-slider').value) * 2.5;
-      const fontFamily = document.getElementById('font-select').value;
-      const color = document.getElementById('color-picker').value;
-
-      ctx.font = `bold ${fontSize}px ${fontFamily}`;
-      ctx.fillStyle = color;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-
-      if (isGlow) {
-        ctx.shadowColor = color;
-        ctx.shadowBlur = 30;
-      }
-
-      const lines = previewText.innerText.split('\n');
-      const lineHeight = fontSize * 1.4;
-      const startY = (canvas.height - (lines.length - 1) * lineHeight) / 2;
-
-      lines.forEach((line, index) => {
-        ctx.fillText(line, canvas.width / 2, startY + index * lineHeight);
-      });
-
