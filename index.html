@@ -45,11 +45,11 @@
       padding: 10px; border-radius: 6px; font-weight: 700; font-size: 14px; cursor: pointer;
     }
     #status-bar {
-      display: none; font-size: 13px; padding: 8px 10px; border-radius: 6px;
-      background: #252525; color: #ffd700; align-items: center; gap: 8px;
+      display: flex; font-size: 13px; padding: 8px 10px; border-radius: 6px;
+      background: #252525; color: #aaa; align-items: center; gap: 8px;
     }
     .spinner {
-      width: 16px; height: 16px; border: 2px solid #ffd700;
+      display: none; width: 16px; height: 16px; border: 2px solid #ffd700;
       border-top: 2px solid transparent; border-radius: 50%;
       animation: spin 0.8s linear infinite; flex-shrink: 0;
     }
@@ -93,7 +93,7 @@
       
       <div id="status-bar">
         <div id="spinner-icon" class="spinner"></div>
-        <span id="status-text">Đang tải nhạc lên...</span>
+        <span id="status-text">⚪ Chưa chọn file nhạc/video nào</span>
       </div>
 
       <audio id="audio-player" controls loop></audio>
@@ -149,10 +149,9 @@
       const file = event.target.files[0];
       if (!file) return;
 
-      statusBar.style.display = 'flex';
       spinnerIcon.style.display = 'block';
       statusBar.style.color = '#ffd700';
-      statusText.innerText = `⏳ Đang xử lý: ${file.name}...`;
+      statusText.innerText = `⏳ Đang tải: ${file.name}...`;
 
       const url = URL.createObjectURL(file);
       audioPlayer.src = url;
@@ -160,16 +159,16 @@
       audioPlayer.onloadeddata = () => {
         spinnerIcon.style.display = 'none';
         statusBar.style.color = '#00ff88';
-        statusText.innerText = `✅ Đã xong! Sẵn sàng phát: ${file.name}`;
+        statusText.innerText = `✅ Đã tải xong: ${file.name}`;
         audioPlayer.style.display = 'block';
         setupAudioAnalyzer();
-        audioPlayer.play();
+        audioPlayer.play().catch(() => {});
       };
 
       audioPlayer.onerror = () => {
         spinnerIcon.style.display = 'none';
         statusBar.style.color = '#ff4d4d';
-        statusText.innerText = `❌ Lỗi định dạng file, hãy chọn video/nhạc khác!`;
+        statusText.innerText = `❌ Không đọc được file này, hãy chọn file khác!`;
       };
     }
 
