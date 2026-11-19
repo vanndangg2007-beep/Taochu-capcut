@@ -17,22 +17,21 @@
       text-align: center; overflow: hidden; position: relative; margin-bottom: 16px;
     }
     #preview-text {
-      font-size: 28px; color: #ffffff; word-break: break-word;
-      white-space: pre-wrap; line-height: 1.4; transition: transform 0.06s ease-out;
+      font-size: 26px; color: #ffffff; word-break: break-word;
+      white-space: pre-wrap; line-height: 1.5; transition: transform 0.06s ease-out;
     }
 
     @keyframes fadeAnim { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
     @keyframes floatAnim { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
-    @keyframes beatDemo { 0%, 100% { transform: scale(1); } 15% { transform: scale(1.18); } 30% { transform: scale(1); } 45% { transform: scale(1.12); } 60% { transform: scale(1); } }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes beatDemo { 0%, 100% { transform: scale(1); } 20% { transform: scale(1.15); } 40% { transform: scale(1); } }
     
     .anim-fade { animation: fadeAnim 2.5s infinite ease-in-out; }
     .anim-float { animation: floatAnim 2.5s infinite ease-in-out; }
-    .anim-beat-demo { animation: beatDemo 1.2s infinite ease-out; }
+    .anim-beat-demo { animation: beatDemo 0.9s infinite ease-out; }
 
     .controls { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 10px; }
     textarea {
-      width: 100%; height: 75px; padding: 12px; border-radius: 8px;
+      width: 100%; height: 80px; padding: 12px; border-radius: 8px;
       border: 1px solid #444; background: #1e1e1e; color: #fff; font-size: 15px; resize: none;
     }
     .row { display: flex; gap: 8px; align-items: center; justify-content: space-between; }
@@ -43,20 +42,20 @@
       background: #1e1e1e; border: 1px dashed #00f2fe; border-radius: 8px;
       padding: 10px; display: flex; flex-direction: column; gap: 8px;
     }
-    .audio-label {
-      display: block; text-align: center; background: #00f2fe; color: #000;
-      padding: 10px; border-radius: 6px; font-weight: 700; font-size: 14px; cursor: pointer;
+    .upload-wrapper {
+      position: relative; width: 100%; height: 42px; background: #00f2fe;
+      border-radius: 6px; display: flex; align-items: center; justify-content: center;
+      color: #000; font-weight: 700; font-size: 14px; overflow: hidden;
+    }
+    .upload-wrapper input[type="file"] {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      opacity: 0; cursor: pointer; font-size: 100px;
     }
     #status-bar {
-      display: flex; font-size: 13px; padding: 8px 10px; border-radius: 6px;
-      background: #252525; color: #aaa; align-items: center; gap: 8px;
+      font-size: 13px; padding: 8px 10px; border-radius: 6px;
+      background: #252525; color: #aaa; word-break: break-all;
     }
-    .spinner {
-      display: none; width: 16px; height: 16px; border: 2px solid #ffd700;
-      border-top: 2px solid transparent; border-radius: 50%;
-      animation: spin 0.8s linear infinite; flex-shrink: 0;
-    }
-    video { width: 100%; height: 46px; display: none; border-radius: 6px; background: #000; }
+    video { width: 100%; height: 48px; display: none; border-radius: 6px; background: #000; }
 
     .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     button {
@@ -66,7 +65,6 @@
     .btn-black { background: #000; color: #fff; border: 1px solid #555; }
     .btn-green { background: #00b140; color: #fff; }
     .btn-glow { background: #2a2a2a; color: #ffd700; border: 1px solid #555; }
-    .btn-demo { background: #3b2d54; color: #e0b0ff; border: 1px solid #7c4dff; grid-column: span 2; }
     .btn-download { background: linear-gradient(90deg, #00f2fe, #4facfe); color: #000; grid-column: span 2; font-size: 15px; }
     .btn-full { background: #333; color: #fff; grid-column: span 2; }
     
@@ -83,33 +81,32 @@
 </head>
 <body>
 
-  <h2>🎵 TẠO CHỮ NHẢY THEO NHẠC 🎵</h2>
+  <h2>🎵 TẠO CHỮ NHẢY THEO NHẠC V8 🎵</h2>
   <button id="exit-full" onclick="toggleFull()">✕ Thoát toàn màn hình</button>
 
   <div id="preview-box">
-    <div id="preview-text">Mưa rơi vào phòng...</div>
+    <div id="preview-text">con gio lua qua
+o cua so</div>
   </div>
 
   <div class="controls">
     <div class="audio-box">
-      <label class="audio-label" for="media-upload">📂 Chọn Video / Nhạc từ Trình quản lý tệp</label>
-      <input type="file" id="media-upload" style="display:none;">
-      
-      <div id="status-bar">
-        <div id="spinner-icon" class="spinner"></div>
-        <span id="status-text">⚪ Đang chờ chọn tệp...</span>
+      <div class="upload-wrapper">
+        <span>📂 Bấm Vào Đây Chọn Video / Nhạc</span>
+        <input type="file" id="media-upload" accept="video/*,audio/*">
       </div>
-
+      <div id="status-bar">⚪ Trạng thái: Chờ chọn video từ máy</div>
       <video id="media-player" controls loop playsinline></video>
     </div>
 
-    <textarea id="text-input" placeholder="Nhập lời bài hát hoặc câu nói..." oninput="updateText()">Mưa rơi vào phòng...</textarea>
+    <textarea id="text-input" placeholder="Nhập lời bài hát hoặc câu nói..." oninput="updateText()">con gio lua qua
+o cua so</textarea>
 
     <div class="row">
       <select id="font-select" onchange="updateStyle()">
+        <option value="'Playfair Display', serif">Chữ cổ điển giống video mẫu</option>
         <option value="'Dancing Script', cursive">Chữ viết tay mềm mại</option>
         <option value="'Pacifico', cursive">Chữ nghệ thuật uốn lượn</option>
-        <option value="'Playfair Display', serif">Chữ nghiêng điện ảnh</option>
         <option value="'Montserrat', sans-serif">Chữ hiện đại sắc nét</option>
         <option value="'Be Vietnam Pro', sans-serif">Chữ đơn giản mặc định</option>
       </select>
@@ -118,13 +115,13 @@
 
     <div class="row">
       <span style="font-size: 13px; color: #aaa;">Cỡ chữ:</span>
-      <input type="range" id="size-slider" min="18" max="60" value="28" oninput="updateStyle()">
+      <input type="range" id="size-slider" min="18" max="60" value="26" oninput="updateStyle()">
       <select id="anim-select" onchange="updateAnim()" style="max-width: 155px;">
-        <option value="beat">Nhảy theo nhịp Bass</option>
-        <option value="anim-beat-demo">Nhảy nhịp Remix tự động</option>
-        <option value="">Tĩnh (Không nhảy)</option>
+        <option value="beat">Nhảy theo nhạc</option>
+        <option value="typewriter">Chạy từng chữ (Gõ phím)</option>
         <option value="anim-fade">Hiện mờ dần</option>
         <option value="anim-float">Lơ lửng</option>
+        <option value="">Tĩnh (Không nhảy)</option>
       </select>
     </div>
 
@@ -132,7 +129,7 @@
       <button class="btn-black" onclick="setBg('#000000')">⬛ Nền Đen</button>
       <button class="btn-green" onclick="setBg('#00FF00')">🟩 Phông Xanh</button>
       <button class="btn-glow" onclick="toggleGlow()" style="grid-column: span 2;">🌟 Bật / Tắt viền phát sáng</button>
-      <button class="btn-full" onclick="playAndFull()">▶️ Phóng To Toàn Màn Hình (Để quay video)</button>
+      <button class="btn-full" onclick="playAndFull()">▶️ Phát Nhạc & Phóng To (Để quay video)</button>
       <button class="btn-download" onclick="downloadImage()">⬇️ Tải Ảnh Chữ Tĩnh (PNG)</button>
     </div>
   </div>
@@ -140,78 +137,101 @@
   <script>
     let currentBg = '#000000';
     let isGlow = false;
-    let audioCtx, analyser, source, dataArray;
     let isBeatMode = true;
-    let analyzerWorking = false;
+    let typeTimer = null;
 
     const previewBox = document.getElementById('preview-box');
     const previewText = document.getElementById('preview-text');
     const mediaPlayer = document.getElementById('media-player');
     const statusBar = document.getElementById('status-bar');
-    const statusText = document.getElementById('status-text');
-    const spinnerIcon = document.getElementById('spinner-icon');
     const fileInput = document.getElementById('media-upload');
 
-    fileInput.addEventListener('click', function() {
-      this.value = '';
-      spinnerIcon.style.display = 'block';
+    fileInput.onchange = function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
       statusBar.style.color = '#ffd700';
-      statusText.innerText = '⏳ Đang mở bộ nhớ máy để chọn tệp...';
-    });
+      statusBar.innerText = '⏳ Đang nạp: ' + file.name;
 
-    fileInput.addEventListener('change', function() {
-      if (!this.files || this.files.length === 0) {
-        spinnerIcon.style.display = 'none';
-        statusBar.style.color = '#aaa';
-        statusText.innerText = '⚪ Đã hủy chọn tệp';
-        return;
-      }
-      const file = this.files.item(0);
-      statusText.innerText = '⏳ Đang nạp: ' + file.name;
-
-      const url = URL.createObjectURL(file);
-      mediaPlayer.src = url;
+      const fileURL = URL.createObjectURL(file);
+      mediaPlayer.src = fileURL;
       mediaPlayer.style.display = 'block';
+      mediaPlayer.load();
 
-      mediaPlayer.onloadedmetadata = function() {
-        spinnerIcon.style.display = 'none';
-        statusBar.style.color = '#00ff88';
-        statusText.innerText = '✅ Đã xong! Bấm nút Play ở thanh dưới';
-        setupAudioAnalyzer();
-        mediaPlayer.play().catch(function() {});
-      };
+      statusBar.style.color = '#00ff88';
+      statusBar.innerText = '✅ Đã nhận: ' + file.name + ' (Bấm Play bên dưới để phát)';
 
-      mediaPlayer.onerror = function() {
-        spinnerIcon.style.display = 'none';
-        statusBar.style.color = '#ff4d4d';
-        statusText.innerText = '❌ Không hỗ trợ định dạng này!';
-      };
-    });
+      mediaPlayer.play().then(function() {
+        startEffect();
+      }).catch(function() {});
+    };
 
-    function setupAudioAnalyzer() {
-      try {
-        if (!audioCtx) {
-          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-          audioCtx = new AudioContextClass();
-          analyser = audioCtx.createAnalyser();
-          source = audioCtx.createMediaElementSource(mediaPlayer);
-          source.connect(analyser);
-          analyser.connect(audioCtx.destination);
-          analyser.fftSize = 64;
-          dataArray = new Uint8Array(analyser.frequencyBinCount);
-          analyzerWorking = true;
-          animateBeat();
-        }
-      } catch (e) {
-        analyzerWorking = false;
+    mediaPlayer.onplay = function() {
+      startEffect();
+    };
+
+    mediaPlayer.onpause = function() {
+      previewText.classList.remove('anim-beat-demo');
+      if (typeTimer) clearInterval(typeTimer);
+    };
+
+    function startEffect() {
+      const mode = document.getElementById('anim-select').value;
+      if (mode === 'beat') {
+        previewText.classList.add('anim-beat-demo');
+      } else if (mode === 'typewriter') {
+        runTypewriter();
       }
     }
 
-    function animateBeat() {
-      requestAnimationFrame(animateBeat);
-      if (isBeatMode && !mediaPlayer.paused) {
-        if (analyzerWorking && analyser) {
-          analyser.getByteFrequencyData(dataArray);
-          let bass = (dataArray.at(0) + dataArray.at(1) + dataArray.at(2)) / 3;
-          if (bass > 0) {
-            previewText.classList.remove('anim-beat-demo');
+    function runTypewriter() {
+      if (typeTimer) clearInterval(typeTimer);
+      const fullText = document.getElementById('text-input').value || 'con gio lua qua...';
+      let index = 0;
+      previewText.innerText = '';
+      typeTimer = setInterval(function() {
+        if (index < fullText.length) {
+          previewText.innerText += fullText.charAt(index);
+          index++;
+        } else {
+          clearInterval(typeTimer);
+        }
+      }, 90);
+    }
+
+    function updateText() {
+      const val = document.getElementById('text-input').value || 'Nhập chữ của bạn...';
+      previewText.innerText = val;
+      if (document.getElementById('anim-select').value === 'typewriter') {
+        runTypewriter();
+      }
+    }
+
+    function updateStyle() {
+      previewText.style.fontFamily = document.getElementById('font-select').value;
+      previewText.style.color = document.getElementById('color-picker').value;
+      previewText.style.fontSize = document.getElementById('size-slider').value + 'px';
+      applyGlow();
+    }
+
+    function setBg(color) {
+      currentBg = color;
+      previewBox.style.background = color;
+    }
+
+    function toggleGlow() {
+      isGlow = !isGlow;
+      applyGlow();
+    }
+
+    function applyGlow() {
+      const color = document.getElementById('color-picker').value;
+      previewText.style.textShadow = isGlow ? '0 0 12px ' + color + ', 0 0 24px ' + color : 'none';
+    }
+
+    function updateAnim() {
+      const val = document.getElementById('anim-select').value;
+      previewText.className = '';
+      if (typeTimer) clearInterval(typeTimer);
+      previewText.innerText = document.getElementById('text-input').value || 'con gio lua qua...';
+
