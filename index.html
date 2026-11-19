@@ -3,14 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tạo Chữ Nghệ Thuật CapCut</title>
+  <title>Tạo Chữ Nhảy Theo Nhạc CapCut</title>
   <link href="https://googleapis.com" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Be Vietnam Pro', sans-serif; }
     body { background: #121212; color: #fff; display: flex; flex-direction: column; align-items: center; padding: 16px; min-height: 100vh; }
     h2 { font-size: 18px; margin-bottom: 12px; color: #00f2fe; text-align: center; }
     
-    /* Khung hiển thị chữ */
     #preview-box {
       width: 100%; max-width: 400px; height: 260px; background: #000000;
       border: 1px solid #333; border-radius: 12px; display: flex;
@@ -19,28 +18,34 @@
     }
     #preview-text {
       font-size: 28px; color: #ffffff; word-break: break-word;
-      white-space: pre-wrap; line-height: 1.4; transition: all 0.2s;
+      white-space: pre-wrap; line-height: 1.4; transition: transform 0.05s ease-out;
     }
 
-    /* Hiệu ứng chữ */
     @keyframes fadeAnim { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
-    @keyframes pulseAnim { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
     @keyframes floatAnim { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
     .anim-fade { animation: fadeAnim 2.5s infinite ease-in-out; }
-    .anim-pulse { animation: pulseAnim 1.5s infinite ease-in-out; }
     .anim-float { animation: floatAnim 2.5s infinite ease-in-out; }
 
-    /* Bảng điều khiển */
-    .controls { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 12px; }
+    .controls { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 10px; }
     textarea {
-      width: 100%; height: 80px; padding: 12px; border-radius: 8px;
+      width: 100%; height: 75px; padding: 12px; border-radius: 8px;
       border: 1px solid #444; background: #1e1e1e; color: #fff; font-size: 15px; resize: none;
     }
     .row { display: flex; gap: 8px; align-items: center; justify-content: space-between; }
     select, input[type="range"] { flex: 1; padding: 10px; border-radius: 8px; background: #1e1e1e; color: #fff; border: 1px solid #444; }
     input[type="color"] { width: 44px; height: 40px; border: none; border-radius: 8px; background: none; cursor: pointer; }
     
-    .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+    .audio-box {
+      background: #1e1e1e; border: 1px dashed #00f2fe; border-radius: 8px;
+      padding: 10px; display: flex; flex-direction: column; gap: 8px;
+    }
+    .audio-label {
+      display: block; text-align: center; background: #00f2fe; color: #000;
+      padding: 10px; border-radius: 6px; font-weight: 700; font-size: 14px; cursor: pointer;
+    }
+    audio { width: 100%; height: 36px; display: none; }
+
+    .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     button {
       padding: 12px; border: none; border-radius: 8px; font-weight: 700;
       font-size: 14px; cursor: pointer; transition: 0.2s;
@@ -51,7 +56,6 @@
     .btn-download { background: linear-gradient(90deg, #00f2fe, #4facfe); color: #000; grid-column: span 2; font-size: 15px; }
     .btn-full { background: #333; color: #fff; grid-column: span 2; }
     
-    /* Chế độ toàn màn hình để quay video */
     .fullscreen-mode #preview-box {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       max-width: none; border-radius: 0; border: none; z-index: 999;
@@ -65,7 +69,7 @@
 </head>
 <body>
 
-  <h2>✨ TẠO CHỮ LỚP PHỦ CAPCUT ✨</h2>
+  <h2>🎵 TẠO CHỮ NHẢY THEO NHẠC 🎵</h2>
   <button id="exit-full" onclick="toggleFull()">✕ Thoát toàn màn hình</button>
 
   <div id="preview-box">
@@ -73,7 +77,13 @@
   </div>
 
   <div class="controls">
-    <textarea id="text-input" placeholder="Nhập lời bài hát hoặc câu nói của bạn..." oninput="updateText()">Mưa rơi vào phòng...</textarea>
+    <div class="audio-box">
+      <label class="audio-label" for="media-upload">📂 Chọn Video TikTok hoặc Nhạc từ máy</label>
+      <input type="file" id="media-upload" accept="audio/*,video/*" style="display:none;" onchange="loadMedia(event)">
+      <audio id="audio-player" controls loop></audio>
+    </div>
+
+    <textarea id="text-input" placeholder="Nhập lời bài hát hoặc câu nói..." oninput="updateText()">Mưa rơi vào phòng...</textarea>
 
     <div class="row">
       <select id="font-select" onchange="updateStyle()">
@@ -83,16 +93,16 @@
         <option value="'Montserrat', sans-serif">Chữ hiện đại sắc nét</option>
         <option value="'Be Vietnam Pro', sans-serif">Chữ đơn giản mặc định</option>
       </select>
-      <input type="color" id="color-picker" value="#ffffff" onchange="updateStyle()" title="Chọn màu chữ">
+      <input type="color" id="color-picker" value="#ffffff" onchange="updateStyle()">
     </div>
 
     <div class="row">
       <span style="font-size: 13px; color: #aaa;">Cỡ chữ:</span>
       <input type="range" id="size-slider" min="18" max="60" value="28" oninput="updateStyle()">
-      <select id="anim-select" onchange="updateAnim()" style="max-width: 150px;">
-        <option value="">Hiệu ứng: Tĩnh</option>
+      <select id="anim-select" onchange="updateAnim()" style="max-width: 155px;">
+        <option value="beat">Nhảy theo nhịp Bass</option>
+        <option value="">Tĩnh (Không nhảy)</option>
         <option value="anim-fade">Hiện mờ dần</option>
-        <option value="anim-pulse">Nhịp đập nhẹ</option>
         <option value="anim-float">Lơ lửng</option>
       </select>
     </div>
@@ -101,20 +111,56 @@
       <button class="btn-black" onclick="setBg('#000000')">⬛ Nền Đen</button>
       <button class="btn-green" onclick="setBg('#00FF00')">🟩 Phông Xanh</button>
       <button class="btn-glow" onclick="toggleGlow()" style="grid-column: span 2;">🌟 Bật / Tắt viền phát sáng</button>
-      <button class="btn-full" onclick="toggleFull()">📱 Phóng to toàn màn hình (Để quay video)</button>
-      <button class="btn-download" onclick="downloadImage()">⬇️ Tải Ảnh Chữ Về Máy (PNG)</button>
+      <button class="btn-full" onclick="playAndFull()">▶️ Phát Nhạc & Phóng To (Để quay video)</button>
+      <button class="btn-download" onclick="downloadImage()">⬇️ Tải Ảnh Chữ Tĩnh (PNG)</button>
     </div>
   </div>
 
   <script>
     let currentBg = '#000000';
     let isGlow = false;
+    let audioCtx, analyser, source, dataArray;
+    let isBeatMode = true;
+
     const previewBox = document.getElementById('preview-box');
     const previewText = document.getElementById('preview-text');
+    const audioPlayer = document.getElementById('audio-player');
+
+    function loadMedia(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const url = URL.createObjectURL(file);
+      audioPlayer.src = url;
+      audioPlayer.style.display = 'block';
+      setupAudioAnalyzer();
+      audioPlayer.play();
+    }
+
+    function setupAudioAnalyzer() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioCtx.createAnalyser();
+        source = audioCtx.createMediaElementSource(audioPlayer);
+        source.connect(analyser);
+        analyser.connect(audioCtx.destination);
+        analyser.fftSize = 64;
+        dataArray = new Uint8Array(analyser.frequencyBinCount);
+        animateBeat();
+      }
+    }
+
+    function animateBeat() {
+      requestAnimationFrame(animateBeat);
+      if (isBeatMode && !audioPlayer.paused && analyser) {
+        analyser.getByteFrequencyData(dataArray);
+        let bass = (dataArray[0] + dataArray[1] + dataArray[2]) / 3;
+        let scale = 1 + (bass / 255) * 0.25;
+        previewText.style.transform = `scale(${scale})`;
+      }
+    }
 
     function updateText() {
-      const val = document.getElementById('text-input').value;
-      previewText.innerText = val || 'Nhập chữ của bạn...';
+      previewText.innerText = document.getElementById('text-input').value || 'Nhập chữ của bạn...';
     }
 
     function updateStyle() {
@@ -140,11 +186,27 @@
     }
 
     function updateAnim() {
-      previewText.className = document.getElementById('anim-select').value;
+      const val = document.getElementById('anim-select').value;
+      if (val === 'beat') {
+        isBeatMode = true;
+        previewText.className = '';
+      } else {
+        isBeatMode = false;
+        previewText.style.transform = 'scale(1)';
+        previewText.className = val;
+      }
+    }
+
+    function playAndFull() {
+      if (audioPlayer.src) {
+        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+        audioPlayer.play();
+      }
+      document.body.classList.add('fullscreen-mode');
     }
 
     function toggleFull() {
-      document.body.classList.toggle('fullscreen-mode');
+      document.body.classList.remove('fullscreen-mode');
     }
 
     function downloadImage() {
@@ -152,7 +214,6 @@
       canvas.width = 1080;
       canvas.height = 1080;
       const ctx = canvas.getContext('2d');
-
       ctx.fillStyle = currentBg;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -178,11 +239,3 @@
         ctx.fillText(line, canvas.width / 2, startY + index * lineHeight);
       });
 
-      const link = document.createElement('a');
-      link.download = 'chu-capcut.png';
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-    }
-  </script>
-</body>
-</html>
